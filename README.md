@@ -238,6 +238,142 @@ full_df.head()
 
 
 
+
+```python
+tumor_response_error = full_df.groupby(["Drug","Timepoint"])["Tumor Volume (mm3)"].sem()
+tre_df = tumor_response_error.to_frame()
+tre_df = tre_df.rename(columns= {"Tumor Volume (mm3)": "Standard Error"})
+tre_df = tre_df.unstack(0)
+tre_df.head()
+```
+
+
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="10" halign="left">Standard Error</th>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <th>Capomulin</th>
+      <th>Ceftamin</th>
+      <th>Infubinol</th>
+      <th>Ketapril</th>
+      <th>Naftisol</th>
+      <th>Placebo</th>
+      <th>Propriva</th>
+      <th>Ramicane</th>
+      <th>Stelasyn</th>
+      <th>Zoniferol</th>
+    </tr>
+    <tr>
+      <th>Timepoint</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.448593</td>
+      <td>0.164505</td>
+      <td>0.235102</td>
+      <td>0.264819</td>
+      <td>0.202385</td>
+      <td>0.218091</td>
+      <td>0.231708</td>
+      <td>0.482955</td>
+      <td>0.239862</td>
+      <td>0.188950</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>0.702684</td>
+      <td>0.236144</td>
+      <td>0.282346</td>
+      <td>0.357421</td>
+      <td>0.319415</td>
+      <td>0.402064</td>
+      <td>0.376195</td>
+      <td>0.720225</td>
+      <td>0.433678</td>
+      <td>0.263949</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>0.838617</td>
+      <td>0.332053</td>
+      <td>0.357705</td>
+      <td>0.580268</td>
+      <td>0.444378</td>
+      <td>0.614461</td>
+      <td>0.466109</td>
+      <td>0.770432</td>
+      <td>0.493261</td>
+      <td>0.370544</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>0.909731</td>
+      <td>0.359482</td>
+      <td>0.476210</td>
+      <td>0.726484</td>
+      <td>0.595260</td>
+      <td>0.839609</td>
+      <td>0.555181</td>
+      <td>0.786199</td>
+      <td>0.621889</td>
+      <td>0.533182</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+
+```
+
 ## Tumor Response to Treatment
 
 
@@ -498,43 +634,20 @@ tumor_plot_df
 
 
 ```python
-tumor_plot_df["Ceftamin"]
-```
-
-
-
-
-    Timepoint
-    0     45.000000
-    5     46.503051
-    10    48.285125
-    15    50.094055
-    20    52.157049
-    25    54.287674
-    30    56.769517
-    35    58.827548
-    40    61.467895
-    45    64.132421
-    Name: Ceftamin, dtype: float64
-
-
-
-
-```python
 x_axis = [0,5,10,15,20,25,30,35,40,45]
 x_limit = 45
 plt.figure(figsize=(10,7))
 
-error = tumor_plot_df["Capomulin"].sem()
+error = tre_df["Standard Error"]["Capomulin"]
 cap = plt.errorbar(x_axis, tumor_plot_df["Capomulin"], yerr=error, fmt="o", ls="dashed", linewidth=1, alpha=1, capsize=3)
 
-error = tumor_plot_df["Infubinol"].sem()
+error = tre_df["Standard Error"]["Infubinol"]
 infu = plt.errorbar(x_axis, tumor_plot_df["Infubinol"], yerr=error, fmt="^", ls="dashed", linewidth=1, alpha=1, capsize=3)
 
-error = tumor_plot_df["Ketapril"].sem()
+error = tre_df["Standard Error"]["Ketapril"]
 keta = plt.errorbar(x_axis, tumor_plot_df["Ketapril"], yerr=error, fmt="s", ls="dashed", linewidth=1, alpha=1, capsize=3)
 
-error = tumor_plot_df["Placebo"].sem()
+error = tre_df["Standard Error"]["Placebo"]
 plac = plt.errorbar(x_axis, tumor_plot_df["Placebo"], yerr=error, fmt="D", ls="dashed", linewidth=1, alpha=1, capsize=3)
 
 plt.ylim(20, 80)
@@ -550,7 +663,7 @@ plt.show()
 ```
 
 
-![png](output_11_0.png)
+![png](output_12_0.png)
 
 
 ## Metastatic Response to Treatment
@@ -623,9 +736,140 @@ meta_df.head()
 
 
 ```python
+meta_response_error = full_df.groupby(["Drug","Timepoint"])["Metastatic Sites"].sem()
+mre_df = meta_response_error.to_frame()
+mre_df = mre_df.rename(columns= {"Metastatic Sites": "Standard Error"})
+mre_df = mre_df.unstack(0)
+mre_df.head()
+```
+
+
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="10" halign="left">Standard Error</th>
+    </tr>
+    <tr>
+      <th>Drug</th>
+      <th>Capomulin</th>
+      <th>Ceftamin</th>
+      <th>Infubinol</th>
+      <th>Ketapril</th>
+      <th>Naftisol</th>
+      <th>Placebo</th>
+      <th>Propriva</th>
+      <th>Ramicane</th>
+      <th>Stelasyn</th>
+      <th>Zoniferol</th>
+    </tr>
+    <tr>
+      <th>Timepoint</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.074833</td>
+      <td>0.108588</td>
+      <td>0.091652</td>
+      <td>0.098100</td>
+      <td>0.093618</td>
+      <td>0.100947</td>
+      <td>0.095219</td>
+      <td>0.066332</td>
+      <td>0.087178</td>
+      <td>0.077709</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>0.125433</td>
+      <td>0.152177</td>
+      <td>0.159364</td>
+      <td>0.142018</td>
+      <td>0.163577</td>
+      <td>0.115261</td>
+      <td>0.105690</td>
+      <td>0.090289</td>
+      <td>0.123672</td>
+      <td>0.109109</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>0.132048</td>
+      <td>0.180625</td>
+      <td>0.194015</td>
+      <td>0.191381</td>
+      <td>0.158651</td>
+      <td>0.190221</td>
+      <td>0.136377</td>
+      <td>0.115261</td>
+      <td>0.153439</td>
+      <td>0.111677</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>0.161621</td>
+      <td>0.241034</td>
+      <td>0.234801</td>
+      <td>0.236680</td>
+      <td>0.181731</td>
+      <td>0.234064</td>
+      <td>0.171499</td>
+      <td>0.119430</td>
+      <td>0.200905</td>
+      <td>0.166378</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
 meta_plot_pre = meta_df.unstack(0)
 meta_plot_df = meta_plot_pre["Metastatic Sites"]
-meta_plot_df
+meta_plot_df.head()
 ```
 
 
@@ -740,71 +984,6 @@ meta_plot_df
       <td>0.952381</td>
       <td>1.294118</td>
     </tr>
-    <tr>
-      <th>25</th>
-      <td>0.818182</td>
-      <td>1.500000</td>
-      <td>1.277778</td>
-      <td>1.631579</td>
-      <td>1.500000</td>
-      <td>1.941176</td>
-      <td>1.357143</td>
-      <td>0.652174</td>
-      <td>1.157895</td>
-      <td>1.687500</td>
-    </tr>
-    <tr>
-      <th>30</th>
-      <td>1.090909</td>
-      <td>1.937500</td>
-      <td>1.588235</td>
-      <td>2.055556</td>
-      <td>2.066667</td>
-      <td>2.266667</td>
-      <td>1.615385</td>
-      <td>0.782609</td>
-      <td>1.388889</td>
-      <td>1.933333</td>
-    </tr>
-    <tr>
-      <th>35</th>
-      <td>1.181818</td>
-      <td>2.071429</td>
-      <td>1.666667</td>
-      <td>2.294118</td>
-      <td>2.266667</td>
-      <td>2.642857</td>
-      <td>2.300000</td>
-      <td>0.952381</td>
-      <td>1.562500</td>
-      <td>2.285714</td>
-    </tr>
-    <tr>
-      <th>40</th>
-      <td>1.380952</td>
-      <td>2.357143</td>
-      <td>2.100000</td>
-      <td>2.733333</td>
-      <td>2.466667</td>
-      <td>3.166667</td>
-      <td>2.777778</td>
-      <td>1.100000</td>
-      <td>1.583333</td>
-      <td>2.785714</td>
-    </tr>
-    <tr>
-      <th>45</th>
-      <td>1.476190</td>
-      <td>2.692308</td>
-      <td>2.111111</td>
-      <td>3.363636</td>
-      <td>2.538462</td>
-      <td>3.272727</td>
-      <td>2.571429</td>
-      <td>1.250000</td>
-      <td>1.727273</td>
-      <td>3.071429</td>
-    </tr>
   </tbody>
 </table>
 </div>
@@ -815,16 +994,16 @@ meta_plot_df
 ```python
 plt.figure(figsize=(10,7))
 
-error2 = meta_plot_df["Capomulin"].sem()
+error2 = mre_df["Standard Error"]["Capomulin"]
 cap2 = plt.errorbar(x_axis, meta_plot_df["Capomulin"], yerr=error2, fmt="o", ls="dashed", linewidth=1, alpha=1, capsize=3)
 
-error2 = meta_plot_df["Infubinol"].sem()
+error2 = mre_df["Standard Error"]["Infubinol"]
 infu2 = plt.errorbar(x_axis, meta_plot_df["Infubinol"], yerr=error2, fmt="^", ls="dashed", linewidth=1, alpha=1, capsize=3)
 
-error2 = meta_plot_df["Ketapril"].sem()
+error2 = mre_df["Standard Error"]["Ketapril"]
 keta2 = plt.errorbar(x_axis, meta_plot_df["Ketapril"], yerr=error2, fmt="s", ls="dashed", linewidth=1, alpha=1, capsize=3)
 
-error2 = meta_plot_df["Placebo"].sem()
+error2 = mre_df["Standard Error"]["Placebo"]
 plac2 = plt.errorbar(x_axis, meta_plot_df["Placebo"], yerr=error2, fmt="D", ls="dashed", linewidth=1, alpha=1, capsize=3)
 
 plt.ylim(0, 4)
@@ -840,7 +1019,7 @@ plt.show()
 ```
 
 
-![png](output_15_0.png)
+![png](output_17_0.png)
 
 
 ## Survival Rates
@@ -1105,17 +1284,10 @@ mice_df
 ```python
 plt.figure(figsize=(10,7))
 
-error3 = mice_df["Capomulin"].sem()
-cap3 = plt.errorbar(x_axis, (mice_df["Capomulin"]/25*100), yerr=error3, fmt="o", ls="dashed", linewidth=1, alpha=1, capsize=3)
-
-error3 = mice_df["Infubinol"].sem()
-infu3 = plt.errorbar(x_axis, (mice_df["Infubinol"]/25*100), yerr=error3, fmt="^", ls="dashed", linewidth=1, alpha=1, capsize=3)
-
-error3 = mice_df["Ketapril"].sem()
-keta3 = plt.errorbar(x_axis, (mice_df["Ketapril"]/25*100), yerr=error3, fmt="s", ls="dashed", linewidth=1, alpha=1, capsize=3)
-
-error3 = mice_df["Placebo"].sem()
-plac3 = plt.errorbar(x_axis, (mice_df["Placebo"]/25*100), yerr=error3, fmt="D", ls="dashed", linewidth=1, alpha=1, capsize=3)
+cap3 = plt.errorbar(x_axis, (mice_df["Capomulin"]/25*100), fmt="o", ls="dashed", linewidth=1, alpha=1, capsize=3)
+infu3 = plt.errorbar(x_axis, (mice_df["Infubinol"]/25*100), fmt="^", ls="dashed", linewidth=1, alpha=1, capsize=3)
+keta3 = plt.errorbar(x_axis, (mice_df["Ketapril"]/25*100),  fmt="s", ls="dashed", linewidth=1, alpha=1, capsize=3)
+plac3 = plt.errorbar(x_axis, (mice_df["Placebo"]/25*100),  fmt="D", ls="dashed", linewidth=1, alpha=1, capsize=3)
 
 plt.ylim(40, 100)
 plt.xlim(0, 45)
@@ -1130,7 +1302,7 @@ plt.show()
 ```
 
 
-![png](output_19_0.png)
+![png](output_21_0.png)
 
 
 ## Summary Bar Graph
@@ -1213,7 +1385,6 @@ drug_change_df
 
 ```python
 plt.figure(figsize=(8,5))
-x_axis2 = np.arange(len(drug_change_df["Drug"]))
 
 rects1 = plt.bar(0, drug_change_df["Percent Change"][0], color='g', alpha=1, align="edge", ec="black", width=1)
 rects2 = plt.bar(1, drug_change_df["Percent Change"][1], color='r', alpha=1, align="edge", ec="black", width=1)
@@ -1243,7 +1414,7 @@ plt.ylabel("% Tumor Volume Change")
 
 
 
-    <matplotlib.text.Text at 0x11199a048>
+    <matplotlib.text.Text at 0x10f004a58>
 
 
 
@@ -1279,7 +1450,7 @@ plt.show()
 ```
 
 
-![png](output_27_0.png)
+![png](output_29_0.png)
 
 
 
